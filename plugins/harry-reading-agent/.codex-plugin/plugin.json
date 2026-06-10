@@ -1,0 +1,38 @@
+{
+  "name": "harry-reading-agent",
+  "version": "0.1.0",
+  "description": "Harry 的个人阅读库 agent：每天从 serious AI 阅读库按日报期数同步前一天文章，并按每日必读标签生成阅读提醒文本。",
+  "author": {
+    "name": "Harry"
+  },
+  "keywords": [
+    "harry",
+    "reading-library",
+    "notion",
+    "daily-reads",
+    "reading-reminder",
+    "personal-knowledge"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Harry 个人阅读库 Agent",
+    "shortDescription": "同步 serious AI 阅读库并生成每日必读提醒",
+    "longDescription": "从 serious AI 阅读库按前一天的日报期数读取文章，只读源库并复制到 Harry 的个人阅读库；当 Harry 说“生成阅读提醒”时，从个人阅读库筛选同一期且标签包含“每日必读”的文章，生成可直接复制到 Telegram / 微信的纯文本提醒。所有 Notion data source、字段名和用户信息都通过本机配置文件填写。",
+    "developerName": "Harry",
+    "category": "Personal",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "同步昨日阅读库",
+      "导入前一天日报文章",
+      "生成阅读提醒",
+      "生成今日阅读提醒"
+    ],
+    "brandColor": "#2563EB",
+    "composerIcon": "./assets/app-icon.svg",
+    "logo": "./assets/app-icon.svg"
+  }
+}

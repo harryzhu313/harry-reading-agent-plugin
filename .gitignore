@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+artifacts/
+dist/
+.cache/
+.tmp/
+.agents/
+*.log
+config/neican-editor.json
+config/harry-reading-agent.json

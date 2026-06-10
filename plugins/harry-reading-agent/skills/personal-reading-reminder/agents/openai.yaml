@@ -1,0 +1,4 @@
+interface:
+  display_name: "个人阅读提醒"
+  short_description: "按每日必读标签生成个人阅读提醒文本"
+  default_prompt: "使用 $personal-reading-reminder 生成阅读提醒：从 Harry 的「阅读库｜reads」筛选前一天日报期数且标签包含「每日必读」的文章，链接使用目标阅读库页面 URL，输出可复制的纯文本。"

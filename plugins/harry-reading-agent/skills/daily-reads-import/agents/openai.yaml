@@ -1,0 +1,4 @@
+interface:
+  display_name: "每日阅读库同步"
+  short_description: "从 serious AI 阅读库按前一天日报期数同步文章到个人阅读库"
+  default_prompt: "使用 $daily-reads-import 同步昨日阅读库：按 Asia/Shanghai 的前一天日期查询 serious AI 阅读库的「日报期数」，只读源页面，把文章复制或更新到 Harry 的「阅读库｜reads」，并用「原文 = 源页面 URL」去重。"

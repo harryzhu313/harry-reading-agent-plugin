@@ -1,0 +1,47 @@
+{
+  "brand": {
+    "productName": "Harry 个人阅读库",
+    "curatorName": "harry"
+  },
+  "timezone": "Asia/Shanghai",
+  "notion": {
+    "sourceReadsDataSourceId": "YOUR_SERIOUS_AI_READS_DATA_SOURCE_ID_HERE",
+    "sourceReadsDatabaseUrl": "YOUR_SERIOUS_AI_READS_DATABASE_URL_HERE",
+    "targetReadsDataSourceId": "YOUR_PERSONAL_READS_DATA_SOURCE_ID_HERE",
+    "targetReadsDatabaseUrl": "YOUR_PERSONAL_READS_DATABASE_URL_HERE",
+    "curatorUserId": "YOUR_NOTION_USER_ID_HERE"
+  },
+  "fields": {
+    "title": "标题",
+    "author": "作者",
+    "sourceName": "信息源",
+    "infoType": "信息类型",
+    "domain": "领域",
+    "tags": "标签",
+    "dailyMustReadTag": "每日必读",
+    "qualityScore": "信息质量分",
+    "tomato": "注意力番茄",
+    "sourcePageUrl": "原文",
+    "sourceUrl": "source link",
+    "summary": "一句话介绍",
+    "readingReason": "阅读理由",
+    "curator": "策展人",
+    "sourceIssueDate": "日报期数",
+    "targetIssueDate": "收录日期",
+    "dailyDeepRead": "每日精读",
+    "conceptIngested": "概念提取+入库?",
+    "actionRelation": "💪 行动库",
+    "ideaRelation": "💡 思想库",
+    "progress": "进度",
+    "progressDoneValue": "3.1 已笔记+概念"
+  },
+  "import": {
+    "lookbackDays": 1,
+    "dedupeField": "原文"
+  },
+  "reminder": {
+    "lookbackDays": 1,
+    "requiredTag": "每日必读",
+    "linkTarget": "target_page"
+  }
+}
