@@ -33,8 +33,36 @@ config/harry-reading-agent.example.json
 
 至少需要：
 
-- Notion CLI：运行 `ntn doctor`，如果 token 无效，先运行 `ntn login`。
+- Notion CLI：运行 `./scripts/notion-auth-check.sh`，确认当前 Codex 执行环境能访问 `ntn` 凭据和 Notion API 网络。
 - Notion MCP / Connector：Codex 中可以 fetch Notion 页面正文、属性、tabs 和图片。
+
+不要只看 `ntn doctor`。在 Codex 的 `seatbelt` 沙箱里，`ntn doctor` 可能显示 `no token found` 但仍返回成功状态；这通常不是 Harry 没登录，而是沙箱进程无法访问 macOS Keychain。
+
+如果 `./scripts/notion-auth-check.sh` 输出：
+
+- `status=ok`：可以继续安装和使用。
+- `status=sandbox-keychain-blocked`：当前 Codex 沙箱看不到 Keychain 里的 `ntn` 登录凭据。手动执行时，切换到可访问 Keychain 的真实环境，或允许 Notion CLI 命令在沙箱外运行。
+- `status=sandbox-network-disabled`：当前 Codex 沙箱禁用了网络，Notion API 查询需要网络权限。
+- `status=not-logged-in`：当前环境确实没有可用凭据，先运行 `ntn login`。
+
+自动化运行建议改用文件认证，避免 Keychain 在沙箱里不可见：
+
+```bash
+NOTION_KEYRING=0 ntn login
+```
+
+然后在用户级 Codex 配置 `~/.codex/config.toml` 中显式传入该环境变量，并确保 workspace-write 沙箱允许网络：
+
+```toml
+[shell_environment_policy]
+inherit = "core"
+set = { NOTION_KEYRING = "0" }
+
+[sandbox_workspace_write]
+network_access = true
+```
+
+`shell_environment_policy` 和 `sandbox_workspace_write.network_access` 是 Codex 用户级配置项，参考 OpenAI Codex 文档：<https://developers.openai.com/codex/config-advanced#shell-environment-policy>。不要把 `NOTION_API_TOKEN`、Folo token 或任何登录凭证写入本仓库。
 
 ## 4. 安装 plugin
 

@@ -43,6 +43,29 @@ Harry 在个人阅读库里给文章打上 `每日必读` 标签后，手动说�
 | 阅读理由字段 | `fields.readingReason` |
 | 策展人名称 | `brand.curatorName` |
 
+## Notion CLI 认证预检
+
+查询前先确认当前执行环境能访问 Notion CLI 凭据：
+
+```bash
+./scripts/notion-auth-check.sh
+```
+
+如果当前不在 repo 根目录，或脚本不可用，则至少运行：
+
+```bash
+ntn whoami -v
+ntn doctor
+```
+
+判断规则：
+
+- `ntn doctor` 可用于查看 CLI 配置，但它在 `no token found` 时仍可能返回成功状态；不得只凭 `ntn doctor` 判断 Harry 未登录。
+- 如果 `./scripts/notion-auth-check.sh` 输出 `status=ok`，或 `ntn whoami -v` 成功，才继续查询目标阅读库。
+- 如果输出 `status=sandbox-keychain-blocked`，或 `ntn whoami -v` 提到 `seatbelt sandbox` / `keychain access`，不要说 Harry 没有登录；应说明当前 Codex 沙箱无法访问 macOS Keychain 中的 `ntn` 凭据。若当前 Codex 支持权限升级，按 Codex 规则请求在沙箱外重跑 Notion CLI；否则让 Harry 切换到可访问 Keychain 的真实环境，或改用文件认证方案 `NOTION_KEYRING=0 ntn login`。
+- 如果输出 `status=sandbox-network-disabled`，不要说 Harry 没有登录；应说明当前 Codex 沙箱禁用了网络，Notion API 查询需要网络权限。
+- 只有在非沙箱环境或 `ntn whoami -v` 明确显示未登录时，才要求 Harry 先完成 `ntn login`。
+
 ## 工作流
 
 ### 1. 解析提醒日期

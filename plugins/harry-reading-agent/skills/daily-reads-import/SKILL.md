@@ -54,13 +54,26 @@ config/harry-reading-agent.json
 - 用 Notion MCP / Connector fetch 源页面正文，保留 enhanced Markdown 结构、图片和 tabs。
 - 不依赖 `notion-query-data-sources`。如果工具 schema 出现但运行不可用，不要切换到它作为主路径。
 
-执行前先确认：
+执行前先做 Notion CLI 认证预检：
 
 ```bash
+./scripts/notion-auth-check.sh
+```
+
+如果当前不在 repo 根目录，或脚本不可用，则至少运行：
+
+```bash
+ntn whoami -v
 ntn doctor
 ```
 
-如果 token 无效，停止并要求 Harry 先完成 `ntn login`。
+判断规则：
+
+- `ntn doctor` 可用于查看 CLI 配置，但它在 `no token found` 时仍可能返回成功状态；不得只凭 `ntn doctor` 判断 Harry 未登录。
+- 如果 `./scripts/notion-auth-check.sh` 输出 `status=ok`，或 `ntn whoami -v` 成功，才继续读写 Notion。
+- 如果输出 `status=sandbox-keychain-blocked`，或 `ntn whoami -v` 提到 `seatbelt sandbox` / `keychain access`，不要说 Harry 没有登录；应说明当前 Codex 沙箱无法访问 macOS Keychain 中的 `ntn` 凭据。若当前 Codex 支持权限升级，按 Codex 规则请求在沙箱外重跑 Notion CLI；否则让 Harry 切换到可访问 Keychain 的真实环境，或改用文件认证方案 `NOTION_KEYRING=0 ntn login`。
+- 如果输出 `status=sandbox-network-disabled`，不要说 Harry 没有登录；应说明当前 Codex 沙箱禁用了网络，Notion API 查询需要网络权限。
+- 只有在非沙箱环境或 `ntn whoami -v` 明确显示未登录时，才要求 Harry 先完成 `ntn login`。
 
 ## 工作流
 

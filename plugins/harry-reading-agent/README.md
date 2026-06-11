@@ -25,6 +25,16 @@ serious AI 阅读库｜reads
 
 不要把真实 Notion data source ID、页面 URL、用户 ID 或 token 写进仓库。
 
+## Notion CLI 认证
+
+执行同步或提醒前，优先用仓库脚本检查当前 Codex 环境：
+
+```bash
+./scripts/notion-auth-check.sh
+```
+
+如果脚本提示 `sandbox-keychain-blocked`，不要重新登录；这通常表示 Codex 沙箱无法访问 macOS Keychain 中已有的 `ntn` 凭据。手动执行时切换到可访问 Keychain 的真实环境；自动化执行建议使用 `NOTION_KEYRING=0 ntn login` 的文件认证方案，并在 Codex 用户配置中传入 `NOTION_KEYRING=0`。
+
 ## 自动化
 
 插件本身不常驻后台。每天凌晨运行需要 Codex automation 或其他调度器唤起 `daily-reads-import`。推荐每天 `01:00 Asia/Shanghai` 执行一次。
