@@ -4,8 +4,8 @@
 
 ## 更新记录
 
-- 未发布：补充 Notion CLI 在 Codex 沙箱中的 Keychain / 网络诊断，新增 `scripts/notion-auth-check.sh`。
-- 未发布：移除旧课程版 `plugins/neican-editor-course/` 和 `config/neican-editor.example.json`，仓库只保留 Harry 个人阅读库 Agent。
+- `0.1.1`：补充 Notion CLI 在 Codex 沙箱中的 Keychain / 网络诊断，新增 `scripts/notion-auth-check.sh`，并强化安装一致性校验。
+- `0.1.1`：移除旧课程版 `plugins/neican-editor-course/` 和 `config/neican-editor.example.json`，仓库只保留 Harry 个人阅读库 Agent。
 - `0.1.0`：新增个人阅读库同步与阅读提醒两个 skill，安装目标改为 `harry-reading-agent`。
 
 完整记录见 `CHANGELOG.md`。
@@ -32,7 +32,7 @@ cd harry-reading-agent-plugin
 - `plugins/harry-reading-agent/`：当前默认安装的 Codex plugin。
 - `config/harry-reading-agent.example.json`：本机配置模板。
 - `scripts/install-codex.sh`：安装到当前用户的 Codex Personal Plugin。
-- `scripts/verify-install.sh`：验证 marketplace、config、cache 三层安装状态。
+- `scripts/verify-install.sh`：验证 marketplace、config、cache 三层安装状态，并检查安装目录与源码关键文件一致。
 - `scripts/notion-auth-check.sh`：诊断当前 Codex 执行环境能否访问 Notion CLI 凭据和网络。
 - `scripts/uninstall-codex.sh`：卸载 Harry 个人阅读库 Agent。
 

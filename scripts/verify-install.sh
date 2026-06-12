@@ -102,6 +102,26 @@ def check_placeholders(config_path: Path, skip_config: bool) -> None:
     ok(f"本机配置文件存在: {config_path}")
 
 
+def check_same_file(source: Path, installed: Path, label: str) -> None:
+    if not installed.exists():
+        fail(f"{label} 缺少文件: {installed}")
+    if source.read_bytes() != installed.read_bytes():
+        fail(f"{label} 与源码不一致: {installed}")
+
+
+def check_plugin_files(source_plugin: Path, installed_plugin: Path, label: str) -> None:
+    key_files = [
+        ".codex-plugin/plugin.json",
+        "README.md",
+        "skills/daily-reads-import/SKILL.md",
+        "skills/personal-reading-reminder/SKILL.md",
+        "assets/app-icon.svg",
+    ]
+    for rel_path in key_files:
+        check_same_file(source_plugin / rel_path, installed_plugin / rel_path, label)
+    ok(f"{label} 与源码关键文件一致")
+
+
 root = Path(os.environ["HARRY_READING_AGENT_ROOT"]).resolve()
 plugin_src = Path(os.environ["HARRY_READING_AGENT_PLUGIN_SRC"]).resolve()
 scan_repo(root)
@@ -124,6 +144,11 @@ agent_config = home / ".codex" / plugin_name / "config.json"
 if not installed_plugin.exists():
     fail(f"安装目录不存在: {installed_plugin}")
 ok(f"安装目录存在: {installed_plugin}")
+removed_plugin = installed_package / "plugins" / "neican-editor-course"
+if removed_plugin.exists():
+    fail(f"安装包仍包含已移除的旧课程插件: {removed_plugin}")
+ok("安装包不包含旧课程插件")
+check_plugin_files(plugin_src, installed_plugin, "安装目录")
 
 if not marketplace_path.exists():
     fail(f"marketplace 不存在: {marketplace_path}")
@@ -154,6 +179,7 @@ if cache_manifest.exists():
     cache_data = json.loads(cache_manifest.read_text())
     if cache_data.get("name") != plugin_name or cache_data.get("version") != version:
         fail("cache manifest 的 name/version 与源码不一致")
+    check_plugin_files(plugin_src, cache_plugin, "Codex cache")
     ok(f"Codex cache 存在: {cache_plugin}")
 else:
     ok("Codex cache 尚未重建；重启 Codex 后会自动生成")

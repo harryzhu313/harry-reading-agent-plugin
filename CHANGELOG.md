@@ -2,11 +2,13 @@
 
 本文件记录 `harry-reading-agent` plugin 的重要变化。
 
-## 未发布 - 2026-06-10
+## 0.1.1 - 2026-06-12
 
 - 新增 `scripts/notion-auth-check.sh`，用于区分 Notion CLI 真实未登录、Codex 沙箱无法访问 Keychain、以及沙箱网络禁用。
 - 更新 `daily-reads-import` 和 `personal-reading-reminder` 的 Notion CLI 预检规则，避免只凭 `ntn doctor` 误判 Harry 未登录。
 - 更新安装说明，补充 `NOTION_KEYRING=0 ntn login` 与 Codex 用户级 `shell_environment_policy` / `sandbox_workspace_write.network_access` 配置口径。
+- 将 plugin manifest 版本升级为 `0.1.1`，避免 Codex 继续复用旧 `0.1.0` cache。
+- 强化 `verify-install.sh`：校验已安装目录和 Codex cache 的关键文件必须与源码一致，并检查安装包不再残留旧课程插件。
 - 移除旧课程版 `plugins/neican-editor-course/`，仓库不再保留内参编辑课程模板内容。
 - 移除旧配置模板 `config/neican-editor.example.json`，避免与 `harry-reading-agent` 当前配置口径混淆。
 

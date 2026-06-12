@@ -1,6 +1,6 @@
 {
   "name": "harry-reading-agent",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Harry 的个人阅读库 agent：每天从 serious AI 阅读库按日报期数同步前一天文章，并按每日必读标签生成阅读提醒文本。",
   "author": {
     "name": "Harry"
