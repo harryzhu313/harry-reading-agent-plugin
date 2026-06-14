@@ -4,7 +4,7 @@
 
 ## 更新记录
 
-- `0.1.2`：收紧正文图片同步路径，要求 `daily-reads-import` 用当前会话 Notion Connector 读写正文并复查图片数量，避免跨设备静默降级为纯文字同步。
+- `0.1.3`：回滚 `daily-reads-import` 的强制 Connector 依赖，恢复 Notion CLI-only 同步；Connector 不可访问源库或目标库时不再阻塞。
 - `0.1.1`：补充 Notion CLI 在 Codex 沙箱中的 Keychain / 网络诊断，新增 `scripts/notion-auth-check.sh`，并强化安装一致性校验。
 - `0.1.1`：移除旧课程版 `plugins/neican-editor-course/` 和 `config/neican-editor.example.json`，仓库只保留 Harry 个人阅读库 Agent。
 - `0.1.0`：新增个人阅读库同步与阅读提醒两个 skill，安装目标改为 `harry-reading-agent`。

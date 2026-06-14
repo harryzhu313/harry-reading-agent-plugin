@@ -2,6 +2,13 @@
 
 本文件记录 `harry-reading-agent` plugin 的重要变化。
 
+## 0.1.3 - 2026-06-15
+
+- 回滚 `daily-reads-import` 的强制 Notion Connector 依赖，恢复 Notion CLI-only 同步路径。
+- 明确 Connector 对源库、目标库或页面返回 `object_not_found` 时不应阻塞同步。
+- 图片、文件媒体和 tabs 校验改为基于 CLI / API 可见结构；无法完整验证时在收尾汇报中标记 warning。
+- 将 plugin manifest 版本升级为 `0.1.3`，避免继续命中 `0.1.2` cache。
+
 ## 0.1.2 - 2026-06-14
 
 - 收紧 `daily-reads-import` 的图片同步规则：页面正文读取、写入和图片 / tabs 校验必须使用当前 Codex 会话中的 Notion MCP / Connector。

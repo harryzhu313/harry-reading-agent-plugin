@@ -35,9 +35,9 @@ serious AI 阅读库｜reads
 
 如果脚本提示 `sandbox-keychain-blocked`，不要重新登录；这通常表示 Codex 沙箱无法访问 macOS Keychain 中已有的 `ntn` 凭据。手动执行时切换到可访问 Keychain 的真实环境；自动化执行建议使用 `NOTION_KEYRING=0 ntn login` 的文件认证方案，并在 Codex 用户配置中传入 `NOTION_KEYRING=0`。
 
-## Notion Connector 正文同步
+## Notion CLI-only 同步
 
-文章正文、图片和 tabs 的复制依赖当前 Codex 会话里的 Notion MCP / Connector。执行 `daily-reads-import` 时，必须能用 Connector fetch 源页面正文，并用 Connector 创建或更新目标页面正文；如果当前会话没有这些工具或没有源/目标页面权限，应停止同步，不要降级成只复制文字。
+`daily-reads-import` 使用 Notion CLI-only 路径同步正文、图片和 tabs。当前 Codex 会话里的 Notion MCP / Connector 没有源库或目标库权限时，不应因此停止同步；若 CLI 无法完整验证图片或 tabs，收尾时按 warning 汇报。
 
 ## 自动化
 
