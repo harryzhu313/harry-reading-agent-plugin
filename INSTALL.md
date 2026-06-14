@@ -36,6 +36,14 @@ config/harry-reading-agent.example.json
 - Notion CLI：运行 `./scripts/notion-auth-check.sh`，确认当前 Codex 执行环境能访问 `ntn` 凭据和 Notion API 网络。
 - Notion MCP / Connector：Codex 中可以 fetch Notion 页面正文、属性、tabs 和图片。
 
+图片同步依赖当前 Codex 会话里的 Connector 工具，不只依赖账号层面的“已连接”。正式同步前，确认当前会话可以：
+
+- fetch 源阅读库 data source 或任意一篇候选源页面。
+- fetch 目标阅读库 data source 或目标页面。
+- 用 Connector 创建或更新目标页面正文。
+
+如果这些能力不可用，`daily-reads-import` 应停止执行，不要降级为只同步文字。
+
 不要只看 `ntn doctor`。在 Codex 的 `seatbelt` 沙箱里，`ntn doctor` 可能显示 `no token found` 但仍返回成功状态；这通常不是 Harry 没登录，而是沙箱进程无法访问 macOS Keychain。
 
 如果 `./scripts/notion-auth-check.sh` 输出：
@@ -89,7 +97,7 @@ network_access = true
 生成今日阅读提醒
 ```
 
-第一次正式写入 Notion 前，建议先让 Codex 只做预检，确认源阅读库、目标阅读库和字段都能读取。
+第一次正式写入 Notion 前，建议先让 Codex 只做预检，确认源阅读库、目标阅读库、字段和 Connector 正文读写能力都可用。
 
 ## 6. 定时运行
 

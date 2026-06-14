@@ -2,6 +2,14 @@
 
 本文件记录 `harry-reading-agent` plugin 的重要变化。
 
+## 0.1.2 - 2026-06-14
+
+- 收紧 `daily-reads-import` 的图片同步规则：页面正文读取、写入和图片 / tabs 校验必须使用当前 Codex 会话中的 Notion MCP / Connector。
+- 新增 Connector 预检要求：当前会话必须能 fetch 源/目标 Notion 页面或 data source，并具备目标正文创建或更新能力。
+- 明确禁止在 Connector 不可用或图片写入失败时静默降级为纯文字同步。
+- 要求同步后重新 fetch 目标页面，按源/目标图片数量验证正文复制结果，并在收尾汇报中列出图片校验状态。
+- 将 plugin manifest 版本升级为 `0.1.2`，避免其他设备继续复用旧 `0.1.1` cache。
+
 ## 0.1.1 - 2026-06-12
 
 - 新增 `scripts/notion-auth-check.sh`，用于区分 Notion CLI 真实未登录、Codex 沙箱无法访问 Keychain、以及沙箱网络禁用。

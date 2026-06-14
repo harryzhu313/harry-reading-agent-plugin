@@ -50,8 +50,10 @@ config/harry-reading-agent.json
 
 ## 工具分工
 
-- 优先用 Notion CLI（`ntn datasources query` / `ntn api`）查询 data source、读取页面属性、创建或更新目标页面。
-- 用 Notion MCP / Connector fetch 源页面正文，保留 enhanced Markdown 结构、图片和 tabs。
+- 优先用 Notion CLI（`ntn datasources query` / `ntn api`）查询 data source、读取页面属性、创建或更新目标页面属性。
+- 页面正文读取、页面正文写入、图片与 tabs 校验必须使用 Notion MCP / Connector 的 enhanced Markdown 能力，例如 `fetch`、`create_pages`、`update_page` 或当前会话中等价的 Notion Connector 工具。
+- 如果源页面包含图片、文件媒体块或 tabs，不得用纯 Notion CLI Markdown 路径替代正文读写，除非后续 Connector 复查证明图片数量和 tabs 标签完全一致。
+- 不允许静默降级为“只同步文字”。当前会话没有可用 Connector、Connector 无权读取源页面、或 Connector 无法写入目标正文时，停止该次同步并说明原因。
 - 不依赖 `notion-query-data-sources`。如果工具 schema 出现但运行不可用，不要切换到它作为主路径。
 
 执行前先做 Notion CLI 认证预检：
@@ -75,6 +77,18 @@ ntn doctor
 - 如果输出 `status=sandbox-network-disabled`，不要说 Harry 没有登录；应说明当前 Codex 沙箱禁用了网络，Notion API 查询需要网络权限。
 - 只有在非沙箱环境或 `ntn whoami -v` 明确显示未登录时，才要求 Harry 先完成 `ntn login`。
 
+## Notion Connector 预检
+
+CLI 认证通过后，继续确认当前 Codex 会话真的暴露了 Notion MCP / Connector 工具。不要只凭“Notion Connector 已连接”继续执行；必须确认本会话可以调用工具并访问同一个 Notion workspace。
+
+最低预检：
+
+- 能用 Notion Connector fetch 源阅读库 data source 或任意一个本次候选源页面。
+- 能用 Notion Connector fetch 目标阅读库 data source 或目标页面。
+- 如果本次需要写正文，当前会话必须有 Connector 的页面创建或更新能力。
+
+任一项失败时停止同步，汇报为 Connector 权限或当前会话工具不可用问题；不要改用纯文字同步绕过。
+
 ## 工作流
 
 ### 1. 解析导入日期
@@ -95,8 +109,9 @@ ntn doctor
 
 - 全部属性。
 - 源页面 URL。
-- 页面正文 enhanced Markdown。
+- 用 Notion Connector fetch 的页面正文 enhanced Markdown。
 - 图片、callout、tabs 等结构。
+- 源页面图片数量：统计 Connector 返回内容里的图片 / image / media 块或 Markdown 图片引用，记为 `sourceImageCount`。如果无法可靠统计，标记为“未知”，后续不得声称图片已验证。
 
 ### 3. 定位或创建目标文章
 
@@ -106,6 +121,8 @@ ntn doctor
 2. 在目标阅读库中查询 `fields.sourcePageUrl` 是否等于源页面 URL。
 3. 已存在：更新该页面。
 4. 不存在：新建页面，图标可沿用源页面图标；没有图标时选择一个与标题主题匹配的 emoji。
+
+可以用 Notion CLI 或 Connector 写属性，但目标页面正文必须通过 Notion Connector 写入。若先用 CLI 创建空页面，再用 Connector 写入正文。
 
 不要使用标题作为唯一去重依据；标题只能作为辅助诊断。
 
@@ -137,6 +154,7 @@ ntn doctor
 把源页面正文完整复制到目标页面：
 
 - 保留文字、标题、列表、图片、callout、quote、divider。
+- 图片相关 Markdown、media tag、文件块语法不得删除、改写为空行或替换成普通链接。
 - 保留 `<tabs>` 结构，不重写、不简化 tabs 标签名。
 - 对 `<tab>` 块逐行保留：
   - `<tabs>`
@@ -145,6 +163,12 @@ ntn doctor
   - tab 内正文
   - `</tab>`
   - `</tabs>`
+
+写入规则：
+
+- 新建页面：用 Connector 创建带正文的目标页，或先创建页面后用 Connector 写入正文。
+- 更新页面：用 Connector replace / update 目标正文；替换前先确认不会误删目标页里的 child page / database。
+- 如果 Connector 写入正文时报错，停止处理该文章并记录失败原因，不要用纯文本正文补写。
 
 如果源页面正文包含 tabs，复制后必须检查目标页面的 tabs 标签名没有丢 emoji、没有被简化为英文裸词。
 
@@ -158,7 +182,9 @@ ntn doctor
 - `fields.targetIssueDate` 等于导入日期。
 - `fields.progress` 等于 `fields.progressDoneValue`。
 - `fields.conceptIngested` 已勾选。
-- 图片和正文结构已保留。
+- 用 Notion Connector 重新 fetch 目标页面正文，确认正文结构已保留。
+- 若 `sourceImageCount` 可统计，则目标图片数量必须等于源图片数量；如果源页面有图片但目标图片数量更少，该文章视为失败。
+- 若 `sourceImageCount` 未知，但源正文显然包含图片或 media 标记，必须在汇报中标记“图片数量未能自动验证”，不得写成“图片已保留”。
 - 若存在 tabs，目标页 tabs 标签名与源页面一致。
 
 ## 收尾汇报
@@ -170,3 +196,4 @@ ntn doctor
 - 新建数、更新数、跳过数。
 - 失败项标题和原因。
 - 是否存在字段缺失或正文复制警告。
+- 图片校验结果：源图片数、目标图片数、未能自动统计的页面数。
