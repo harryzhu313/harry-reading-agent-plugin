@@ -37,7 +37,9 @@ serious AI 阅读库｜reads
 
 ## Notion CLI-only 同步
 
-`daily-reads-import` 使用 Notion CLI-only 路径同步正文、图片和 tabs。当前 Codex 会话里的 Notion MCP / Connector 没有源库或目标库权限时，不应因此停止同步；若 CLI 无法完整验证图片或 tabs，收尾时按 warning 汇报。
+`daily-reads-import` 使用 Notion CLI-only 路径同步正文、图片和 tabs。当前 Codex 会话里的 Notion MCP / Connector 没有源库或目标库权限时，不应因此停止同步。
+
+Notion 内部 file 图片不能只复制 Markdown 里的临时签名 URL；同步时需要下载源图片二进制，并通过 `ntn files create` 上传为目标页 file image。验收时必须检查目标 image block 是 `file` 类型且有非空 file URL。若 CLI 无法完整验证图片或 tabs，收尾时按 warning 汇报。
 
 ## 自动化
 

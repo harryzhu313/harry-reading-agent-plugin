@@ -2,6 +2,12 @@
 
 本文件记录 `harry-reading-agent` plugin 的重要变化。
 
+## 0.1.4 - 2026-06-15
+
+- 修正 `daily-reads-import` 的图片复制口径：Notion 内部 file 图片必须下载二进制并通过 `ntn files create` 上传为目标页 file image，不能把临时 S3 签名 URL 当作已复制图片。
+- 要求同步后复查目标 image block 类型；目标图片必须是 `image.type = file` 且有非空 file URL，空 external URL 或临时签名外链视为失败。
+- 将 plugin manifest 版本升级为 `0.1.4`，避免继续命中 `0.1.3` cache。
+
 ## 0.1.3 - 2026-06-15
 
 - 回滚 `daily-reads-import` 的强制 Notion Connector 依赖，恢复 Notion CLI-only 同步路径。

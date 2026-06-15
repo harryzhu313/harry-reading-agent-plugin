@@ -4,6 +4,7 @@
 
 ## 更新记录
 
+- `0.1.4`：修正 `daily-reads-import` 的图片复制口径，Notion 内部 file 图片必须重新上传为目标页 file image，空 external URL 或临时签名外链视为失败。
 - `0.1.3`：回滚 `daily-reads-import` 的强制 Connector 依赖，恢复 Notion CLI-only 同步；Connector 不可访问源库或目标库时不再阻塞。
 - `0.1.1`：补充 Notion CLI 在 Codex 沙箱中的 Keychain / 网络诊断，新增 `scripts/notion-auth-check.sh`，并强化安装一致性校验。
 - `0.1.1`：移除旧课程版 `plugins/neican-editor-course/` 和 `config/neican-editor.example.json`，仓库只保留 Harry 个人阅读库 Agent。
