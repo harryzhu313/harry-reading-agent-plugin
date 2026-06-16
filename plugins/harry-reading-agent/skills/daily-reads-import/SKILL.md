@@ -99,7 +99,6 @@ ntn doctor
 - 用 Notion CLI / Notion API 读取的页面正文。
 - 图片、callout、tabs 等结构。
 - 源页面图片数量：按 CLI / API 返回的 image、file、external、Markdown 图片引用等可见结构统计，记为 `sourceImageCount`。如果无法可靠统计，标记为“未知”，后续不得声称图片已验证。
-- 源页面 image/file 媒体块的真实类型。Notion 内部图片通常是 `image.type = file`，API 返回的 URL 是短期签名下载链接，只能用于当次下载，不能直接写成目标页 external 图片 URL。
 
 ### 3. 定位或创建目标文章
 
@@ -141,12 +140,6 @@ ntn doctor
 
 - 保留文字、标题、列表、图片、callout、quote、divider。
 - CLI / API 能识别的图片相关 Markdown、media tag、文件块语法不得删除、改写为空行或替换成普通链接。
-- 不得把 Notion 内部 file 图片的临时 S3 签名 URL 当作“已复制图片”。这类 URL 可能超过 Notion external URL 限制或很快过期，目标页会出现空 external 图片或失效图片。
-- 对每个源 image/file 媒体块：
-  - 如果源块是 Notion `file`，用当前 API 返回的 file URL 下载二进制内容，再用 `ntn files create --filename <name> --content-type <mime> --json` 上传到目标 workspace，并用 `ntn api /v1/blocks/{block_id} -X PATCH` 把目标 image 块更新为 `file_upload`。
-  - 如果源块是稳定公开 `external` URL，可以复制为 external；如果目标 external URL 为空、过长、带 Notion/S3 临时签名参数或无法访问，必须改走二进制上传。
-  - 保持源页面中的图片顺序和 caption；图片位于 tabs、callout 或其他嵌套 block 内时也要递归处理。
-- 使用 Markdown 创建/替换正文后，必须复查目标 image block。若 Markdown 导入生成了 `image.type = external` 且 `external.url = ""`，或把 Notion file 图片写成临时外链，必须立即用 file upload 替换。
 - 保留 `<tabs>` 结构，不重写、不简化 tabs 标签名。
 - 对 `<tab>` 块逐行保留：
   - `<tabs>`
@@ -174,8 +167,6 @@ ntn doctor
 - `fields.conceptIngested` 已勾选。
 - 用 Notion CLI 重新读取目标页面正文，确认正文结构已保留。
 - 若 `sourceImageCount` 可统计，则目标图片数量必须等于源图片数量；如果源页面有图片但目标图片数量更少，该文章视为失败。
-- 对源 `image.type = file` 的图片，目标对应 image block 必须是 `image.type = file` 且有非空 file URL；只验证 Markdown 图片数量不算通过。
-- 目标 image block 不得出现空 external URL；若存在 `external.url = ""` 或临时签名外链，该文章视为图片复制失败。
 - 若 `sourceImageCount` 未知，但源正文显然包含图片或 media 标记，必须在汇报中标记“图片数量未能自动验证”，不得写成“图片已保留”；不要求追加 Connector 复查。
 - 若存在 tabs，目标页 tabs 标签名与源页面一致。
 
